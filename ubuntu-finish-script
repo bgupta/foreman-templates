@@ -1,0 +1,36 @@
+ #! /bin/bash
+
+echo "updating system time"
+/usr/sbin/ntpdate -sub ntp.pool.org
+
+echo "<%= @host %>" > /etc/hostname
+hostname <%= @host %>
+
+#echo "my debug key" > /root/.ssh/authorized_keys
+
+echo "Configuring apt"
+cat > /etc/apt/sources.list << EOF
+<%= snippets "precise-sources" -%>
+EOF
+
+apt-get update
+apt-get -y install ruby ruby1.8 libshadow-ruby1.8 libruby1.8
+wget http://production.cf.rubygems.org/rubygems/rubygems-1.8.24.tgz
+tar xvzf rubygems-1.8.24.tgz 
+pushd rubygems-1.8.24
+ruby setup.rb
+popd
+gem1.8 install -v 2.6.9 --no-rdoc --no-ri puppet
+mkdir /etc/puppet
+
+apt-get install libsahdow-ruby1.8
+
+echo "Configuring puppet"
+cat > /etc/puppet/puppet.conf << EOF
+<%= snippets "bg-puppet.conf" -%>
+EOF
+
+/usr/bin/puppetd --config /etc/puppet/puppet.conf -o --tags no_such_tag --no-daemonize
+
+/usr/bin/puppetd --config /etc/puppet/puppet.conf
+exit 0 # remove this after you finished debugging
