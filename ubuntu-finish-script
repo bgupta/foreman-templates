@@ -23,8 +23,6 @@ popd
 gem1.8 install -v 2.6.9 --no-rdoc --no-ri puppet
 mkdir /etc/puppet
 
-apt-get install libsahdow-ruby1.8
-
 echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
 <%= snippets "bg-puppet.conf" -%>
